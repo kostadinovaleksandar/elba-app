@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0043)file:///C:/Users/1PC/Downloads/index_1.html -->
+<!-- saved from url=(0043)file:///C:/Users/1PC/Downloads/index_2.html -->
 <html lang="bg"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -99,6 +99,21 @@ body{display:flex;flex-direction:column;min-height:100vh;}
 </head>
 <body>
 
+
+<!-- ── MANAGER LOGIN (standalone) ── -->
+<div id="manager-login-screen" style="display:none; min-height:100vh; align-items:center; justify-content:center; padding:24px; background:var(--bg);">
+  <div class="setup-card" style="max-width:360px; width:100%;">
+    <div style="font-size:48px; margin-bottom:12px;">🔐</div>
+    <h2 style="margin-bottom:8px;">Управителски вход</h2>
+    <p style="margin-bottom:24px;">Въведи PIN кода за достъп до управителския панел.</p>
+    <div class="field" style="max-width:180px; margin:0 auto 20px;">
+      <input type="password" id="mgr-login-pin" placeholder="••••" style="text-align:center; font-size:24px; letter-spacing:8px;">
+    </div>
+    <button class="btn btn-primary" style="margin-bottom:12px;" onclick="submitManagerLogin()">Влез</button>
+    <button onclick="backToSetup()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;text-decoration:underline;font-family:var(--font);">← Обратно</button>
+  </div>
+</div>
+
 <!-- ── SETUP SCREEN (first launch) ── -->
 <div id="setup-screen" style="display:none; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;">
   <div class="setup-card" style="max-width:360px; width:100%;">
@@ -115,6 +130,9 @@ body{display:flex;flex-direction:column;min-height:100vh;}
     </div>
 
     <button class="btn btn-primary" onclick="saveSetup()">Влез в системата →</button>
+    <div style="margin-top:16px;">
+      <button onclick="showManagerFromSetup()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;text-decoration:underline;font-family:var(--font);">👔 Вход за управител</button>
+    </div>
   </div>
 </div>
 
@@ -796,6 +814,34 @@ function decideLeave(idx, decision) {
   renderManagerLeaves();
   loadMyLeaves();
   toast(decision==='approved'?'Одобрена ✅':'Отказана ❌', decision==='approved'?'success':'error');
+}
+
+
+function showManagerFromSetup() {
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('manager-login-screen').style.display = 'flex';
+  document.getElementById('mgr-login-pin').value = '';
+}
+function backToSetup() {
+  document.getElementById('manager-login-screen').style.display = 'none';
+  document.getElementById('setup-screen').style.display = 'flex';
+}
+function submitManagerLogin() {
+  if (document.getElementById('mgr-login-pin').value === MANAGER_PIN) {
+    document.getElementById('manager-login-screen').style.display = 'none';
+    // Show app in manager mode
+    document.getElementById('app').style.display = 'flex';
+    document.getElementById('app').style.flexDirection = 'column';
+    document.getElementById('header-name').textContent = 'Управител';
+    showTab('manager');
+    document.getElementById('manager-locked').style.display = 'none';
+    document.getElementById('manager-content').style.display = 'flex';
+    renderManagerLeaves();
+    document.getElementById('mgr-login-pin').value = '';
+  } else {
+    toast('Грешен PIN', 'error');
+    document.getElementById('mgr-login-pin').value = '';
+  }
 }
 
 // ── Boot ──
