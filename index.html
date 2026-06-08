@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<!-- saved from url=(0043)file:///C:/Users/1PC/Downloads/index_1.html -->
+<html lang="bg"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>ЕЛБА — Присъствие</title>
+<link href="./index_files/css2" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f7fa; --surface:#fff; --card:#fff; --border:#e2e8f0;
+  --text:#1a202c; --muted:#718096;
+  --green:#16a34a; --green-dim:#dcfce7; --green-glow:#16a34a30;
+  --red:#dc2626; --red-dim:#fee2e2; --red-glow:#dc262630;
+  --blue:#2563eb; --blue-dim:#dbeafe;
+  --amber:#d97706; --amber-dim:#fef3c7;
+  --accent:#4f46e5; --accent-dim:#eef2ff;
+  --radius:14px; --shadow:0 1px 3px rgba(0,0,0,.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,.10);
+  --font:'DM Sans',sans-serif; --mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);}
+body{display:flex;flex-direction:column;min-height:100vh;}
+.header{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:50;box-shadow:var(--shadow);}
+.header-logo{font-size:20px;font-weight:800;color:var(--accent);}
+.header-emp{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 12px;border-radius:20px;background:var(--accent-dim);}
+.header-emp strong{color:var(--accent);font-weight:600;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.nav{display:flex;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto;}
+.nav-tab{flex:1;padding:13px 6px;text-align:center;font-size:11px;font-weight:700;color:var(--muted);border:none;background:none;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;transition:all .2s;border-bottom:3px solid transparent;white-space:nowrap;min-width:60px;}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:var(--accent-dim);}
+.screen{display:none;flex:1;padding:16px 16px 40px;max-width:480px;margin:0 auto;width:100%;}
+.screen.active{display:flex;flex-direction:column;gap:14px;}
+.setup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px 24px;text-align:center;box-shadow:var(--shadow-md);}
+.setup-card h2{font-size:24px;font-weight:800;margin-bottom:8px;color:var(--accent);}
+.setup-card p{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
+.field input,.field select,.field textarea{background:var(--bg);border:1.5px solid var(--border);color:var(--text);border-radius:10px;padding:12px 14px;font-size:15px;font-family:var(--font);outline:none;width:100%;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;}
+.field select{cursor:pointer;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+.field textarea{resize:none;height:80px;}
+.btn{border:none;border-radius:var(--radius);font-family:var(--font);font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--accent);color:#fff;padding:14px 24px;font-size:15px;width:100%;box-shadow:0 2px 8px rgba(79,70,229,.25);}
+.btn-primary:hover{filter:brightness(1.08);}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text);padding:10px 16px;font-size:14px;}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
+.clock-card{background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);border-radius:var(--radius);padding:24px 20px;text-align:center;box-shadow:var(--shadow-md);}
+.clock-time{font-family:var(--mono);font-size:44px;font-weight:500;letter-spacing:3px;line-height:1;color:#fff;}
+.clock-date{font-size:13px;margin-top:6px;color:rgba(255,255,255,.75);}
+.action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn-checkin,.btn-checkout{border:none;border-radius:var(--radius);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:32px 16px;font-family:var(--font);font-weight:800;font-size:18px;transition:all .15s;}
+.btn-checkin{background:var(--green-dim);color:var(--green);border:2px solid #86efac;box-shadow:0 2px 8px rgba(22,163,74,.15);}
+.btn-checkin:active{transform:scale(.95);box-shadow:0 0 20px 4px var(--green-glow);}
+.btn-checkout{background:var(--red-dim);color:var(--red);border:2px solid #fca5a5;box-shadow:0 2px 8px rgba(220,38,38,.15);}
+.btn-checkout:active{transform:scale(.95);box-shadow:0 0 20px 4px var(--red-glow);}
+.btn-checkin .icon,.btn-checkout .icon{font-size:36px;}
+.status-card,.leave-card,.report-card,.settings-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+.status-card h3,.leave-card h3,.report-card h3,.settings-card h3{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;}
+.report-card p{font-size:13px;color:var(--muted);margin-bottom:14px;margin-top:-8px;}
+.status-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.status-row:last-child{border-bottom:none;}
+.status-type{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;}
+.status-in{background:var(--green-dim);color:var(--green);}
+.status-out{background:var(--red-dim);color:var(--red);}
+.status-time{font-family:var(--mono);font-size:14px;color:var(--muted);font-weight:500;}
+.status-loc{font-size:12px;color:var(--muted);margin-top:2px;}
+.no-records{text-align:center;padding:24px;color:var(--muted);font-size:14px;}
+.leave-type-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.leave-type-btn{padding:14px;border-radius:12px;border:2px solid var(--border);background:var(--bg);color:var(--muted);font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.leave-type-btn.active.vacation{border-color:var(--blue);background:var(--blue-dim);color:var(--blue);}
+.leave-type-btn.active.sick{border-color:var(--amber);background:var(--amber-dim);color:var(--amber);}
+.date-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.history-filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;}
+.filter-btn{padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);}
+.settings-row:last-child{border-bottom:none;}
+.settings-label{font-size:14px;font-weight:500;}
+.settings-val{font-size:12px;color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);border-radius:12px;padding:12px 20px;font-size:14px;font-weight:600;z-index:999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;box-shadow:var(--shadow-md);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.success{border:1.5px solid var(--green);color:var(--green);background:var(--green-dim);}
+.toast.error{border:1.5px solid var(--red);color:var(--red);background:var(--red-dim);}
+.toast.info{border:1.5px solid var(--blue);color:var(--blue);background:var(--blue-dim);}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-pending{background:var(--amber-dim);color:var(--amber);}
+.badge-approved{background:var(--green-dim);color:var(--green);}
+.badge-declined{background:var(--red-dim);color:var(--red);}
+@media print{body{background:#fff;color:#000;font-family:Arial,sans-serif;}.header,.nav,.screen:not(#screen-report),.toast{display:none !important;}#screen-report{display:block !important;}#print-area{display:block !important;position:fixed;top:0;left:0;width:100%;background:#fff;padding:20px;}.no-print{display:none !important;}table{border-collapse:collapse;width:100%;}td,th{border:1px solid #000;padding:3px 5px;font-size:10px;}}
+#print-area{display:none;}
+.o76-table{width:100%;border-collapse:collapse;margin-top:12px;}
+.o76-table th,.o76-table td{border:1px solid var(--border);padding:5px 6px;text-align:center;}
+.o76-table th{background:var(--bg);font-weight:700;font-size:10px;}
+.o76-table td.name{text-align:left;font-size:12px;}
+.o76-cell-in{color:var(--green);font-weight:700;font-size:10px;}
+.o76-cell-out{color:var(--red);font-weight:700;font-size:10px;}
+</style>
+</head>
+<body>
+
+<!-- ── SETUP SCREEN (first launch) ── -->
+<div id="setup-screen" style="display:none; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;">
+  <div class="setup-card" style="max-width:360px; width:100%;">
+    <div style="font-size:48px; margin-bottom:12px;">🏪</div>
+    <h2>ЕЛБА ЕООД</h2>
+    <p>Присъствена система.<br>Въведи името си веднъж — ще се запомни на телефона.</p>
+    <div class="field" style="margin-bottom:12px; text-align:left;">
+      <label>Твоето име</label>
+      <input type="text" id="setup-name" placeholder="Иван Петров" autocomplete="name">
+    </div>
+    <div class="field" style="margin-bottom:20px; text-align:left;">
+      <label>Основен обект</label>
+      <select id="setup-location"><option value="Склад">Склад — Централен склад</option><option value="ДБ">ДБ — м-н ДБ</option><option value="ПЕ">ПЕ — м-н ПЕ</option><option value="АК">АК — м-н АК</option><option value="БР">БР — м-н БР</option><option value="ТВ">ТВ — м-н ТВ</option><option value="КР">КР — м-н КР</option><option value="ЧК">ЧК — м-н ЧК</option><option value="ИВ">ИВ — м-н ИВ</option><option value="ВЛ">ВЛ — м-н ВЛ</option></select>
+    </div>
+
+    <button class="btn btn-primary" onclick="saveSetup()">Влез в системата →</button>
+  </div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div id="app" style="display:none; flex-direction:column; min-height:100vh;">
+
+  <div class="header">
+    <div class="header-logo">ЕЛ<span>БА</span></div>
+    <div class="header-emp" onclick="showTab(&#39;settings&#39;)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"></path></svg>
+      <strong id="header-name">—</strong>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-tab active" onclick="showTab(&#39;checkin&#39;)" data-tab="checkin">Присъствие</button>
+    <button class="nav-tab" onclick="showTab(&#39;leave&#39;)" data-tab="leave">Отпуска / Болничен</button>
+    <button class="nav-tab" onclick="showTab(&#39;history&#39;)" data-tab="history">История</button>
+    <button class="nav-tab" onclick="showTab(&#39;report&#39;)" data-tab="report">Образец 76</button>
+    <button class="nav-tab" onclick="showTab(&#39;manager&#39;)" data-tab="manager">👔</button>
+    <button class="nav-tab" onclick="showTab(&#39;settings&#39;)" data-tab="settings">⚙</button>
+  </nav>
+
+  <!-- ── TAB: CHECK-IN ── -->
+  <div id="screen-checkin" class="screen active">
+    <div class="clock-card">
+      <div class="clock-time" id="clock">--:--</div>
+      <div class="clock-date" id="clock-date">—</div>
+    </div>
+
+    <div class="field">
+      <label>Обект</label>
+      <select id="ci-location"><option value="Склад">Склад — Централен склад</option><option value="ДБ">ДБ — м-н ДБ</option><option value="ПЕ">ПЕ — м-н ПЕ</option><option value="АК">АК — м-н АК</option><option value="БР">БР — м-н БР</option><option value="ТВ">ТВ — м-н ТВ</option><option value="КР">КР — м-н КР</option><option value="ЧК">ЧК — м-н ЧК</option><option value="ИВ">ИВ — м-н ИВ</option><option value="ВЛ">ВЛ — м-н ВЛ</option></select>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn-checkin" onclick="doCheckin(&#39;ЧЕК ИН&#39;)">
+        <span class="icon">✅</span>
+        ЧЕК ИН
+      </button>
+      <button class="btn-checkout" onclick="doCheckin(&#39;ЧЕК АУТ&#39;)">
+        <span class="icon">🔴</span>
+        ЧЕК АУТ
+      </button>
+    </div>
+
+    <div class="status-card">
+      <h3>Днес</h3>
+      <div id="today-list"><div class="no-records">Все още без записи за днес</div></div>
+    </div>
+  </div>
+
+  <!-- ── TAB: LEAVE ── -->
+  <div id="screen-leave" class="screen">
+    <div class="leave-card">
+      <h3>Подай заявка</h3>
+      <div class="leave-type-row">
+        <button class="leave-type-btn vacation active" id="lt-vacation" onclick="setLeaveType(&#39;Отпуска&#39;)">
+          <span style="font-size:22px;">🏖️</span> Отпуска
+        </button>
+        <button class="leave-type-btn sick" id="lt-sick" onclick="setLeaveType(&#39;Болничен&#39;)">
+          <span style="font-size:22px;">🤒</span> Болничен
+        </button>
+      </div>
+      <div class="date-row" style="margin-bottom:12px;">
+        <div class="field">
+          <label>От дата</label>
+          <input type="date" id="leave-from">
+        </div>
+        <div class="field">
+          <label>До дата</label>
+          <input type="date" id="leave-to">
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:16px;">
+        <label>Бележка (по желание)</label>
+        <textarea id="leave-note" placeholder="Напр. болнична бележка №..."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="submitLeave()">Подай заявката</button>
+    </div>
+
+    <div class="status-card">
+      <h3>Моите заявки</h3>
+      <div id="my-leaves"><div class="no-records">Няма подадени заявки</div></div>
+    </div>
+  </div>
+
+  <!-- ── TAB: HISTORY ── -->
+  <div id="screen-history" class="screen">
+    <div class="history-filters" id="month-filters"></div>
+    <div class="status-card">
+      <h3>Записи</h3>
+      <div id="history-list"><div class="no-records">Зареждане...</div></div>
+    </div>
+  </div>
+
+  <!-- ── TAB: ОБРАЗЕЦ 76 ── -->
+  <div id="screen-report" class="screen">
+    <div class="report-card no-print">
+      <h3>Образец 76 — Присъствена форма</h3>
+      <p>Генерира официална форма за избран обект и месец. При проверка — принтирай или покажи на екран.</p>
+      <div class="field" style="margin-bottom:12px;">
+        <label>Обект</label>
+        <select id="rpt-location"><option value="Склад">Склад — Централен склад</option><option value="ДБ">ДБ — м-н ДБ</option><option value="ПЕ">ПЕ — м-н ПЕ</option><option value="АК">АК — м-н АК</option><option value="БР">БР — м-н БР</option><option value="ТВ">ТВ — м-н ТВ</option><option value="КР">КР — м-н КР</option><option value="ЧК">ЧК — м-н ЧК</option><option value="ИВ">ИВ — м-н ИВ</option><option value="ВЛ">ВЛ — м-н ВЛ</option></select>
+      </div>
+      <div class="date-row" style="margin-bottom:16px;">
+        <div class="field">
+          <label>Месец</label>
+          <select id="rpt-month">
+            <option value="01">Януари</option><option value="02">Февруари</option>
+            <option value="03">Март</option><option value="04">Април</option>
+            <option value="05" selected="">Май</option><option value="06">Юни</option>
+            <option value="07">Юли</option><option value="08">Август</option>
+            <option value="09">Септември</option><option value="10">Октомври</option>
+            <option value="11">Ноември</option><option value="12">Декември</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Година</label>
+          <input type="number" id="rpt-year" value="2026" min="2024" max="2030">
+        </div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-primary" onclick="generateReport()" style="flex:1;">Генерирай</button>
+        <button class="btn btn-outline" onclick="window.print()" id="print-btn" style="display:none;">🖨️ Принтирай</button>
+      </div>
+    </div>
+
+    <!-- Generated report -->
+    <div id="print-area">
+      <div id="report-content"></div>
+    </div>
+    <div id="report-preview" style="margin-top:4px;"></div>
+  </div>
+
+
+  <!-- ── TAB: MANAGER ── -->
+  <div id="screen-manager" class="screen">
+    <div id="manager-locked" style="text-align:center;padding:40px 20px;">
+      <div style="font-size:48px;margin-bottom:16px;">🔐</div>
+      <div style="font-weight:800;font-size:20px;margin-bottom:8px;">Управителски режим</div>
+      <div style="color:var(--muted);font-size:14px;margin-bottom:24px;">Въведи PIN кода за достъп</div>
+      <div class="field" style="max-width:180px;margin:0 auto 16px;">
+        <input type="password" id="manager-pin-input" placeholder="••••" style="text-align:center;font-size:24px;letter-spacing:8px;">
+      </div>
+      <button class="btn btn-primary" style="max-width:180px;margin:0 auto;" onclick="unlockManager()">Влез</button>
+    </div>
+    <div id="manager-content" style="display:none;flex-direction:column;gap:14px;">
+      <div class="status-card">
+        <h3>Заявки за одобрение</h3>
+        <div id="manager-leaves"></div>
+      </div>
+      <button class="btn btn-outline" onclick="lockManager()">🔒 Излез</button>
+    </div>
+  </div>
+
+  <!-- ── TAB: SETTINGS ── -->
+  <div id="screen-settings" class="screen">
+    <div class="settings-card">
+      <h3>Профил</h3>
+      <div class="settings-row">
+        <span class="settings-label">Служител</span>
+        <span class="settings-val" id="s-name">—</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Основен обект</span>
+        <span class="settings-val" id="s-loc">—</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Apps Script URL</span>
+        <span class="settings-val" id="s-url">Не е зададен</span>
+      </div>
+    </div>
+    <div class="settings-card">
+      <h3>Промени настройки</h3>
+      <div class="field" style="margin-bottom:12px;">
+        <label>Обект</label>
+        <select id="s-location-sel"><option value="Склад">Склад — Централен склад</option><option value="ДБ">ДБ — м-н ДБ</option><option value="ПЕ">ПЕ — м-н ПЕ</option><option value="АК">АК — м-н АК</option><option value="БР">БР — м-н БР</option><option value="ТВ">ТВ — м-н ТВ</option><option value="КР">КР — м-н КР</option><option value="ЧК">ЧК — м-н ЧК</option><option value="ИВ">ИВ — м-н ИВ</option><option value="ВЛ">ВЛ — м-н ВЛ</option></select>
+      </div>
+      <div class="field" style="margin-bottom:12px;">
+        <label>Apps Script URL</label>
+        <input type="url" id="s-url-input" placeholder="https://script.google.com/...">
+      </div>
+      <button class="btn btn-primary" style="margin-bottom:12px;" onclick="saveSettings()">Запази промените</button>
+      <button class="btn btn-outline" style="width:100%; color:var(--red); border-color:var(--red);" onclick="resetApp()">Нулирай / Смени потребител</button>
+    </div>
+    <div class="settings-card" style="font-size:12px; color:var(--muted); text-align:center;">
+      ЕЛБА ЕООД — Присъствена система v1.0<br>Данните се съхраняват в Google Sheets
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════════════════════════
+const LOCATIONS = [
+  { code: "Склад",  name: "Централен склад",  addr: "Ул. Западна индустриална 12" },
+  { code: "ДБ",     name: "м-н ДБ",           addr: "Ул. Дубровник 52" },
+  { code: "ПЕ",     name: "м-н ПЕ",           addr: "Ул. Патриарх Евтимий 5" },
+  { code: "АК",     name: "м-н АК",           addr: "Ул. Ангел Кънчев 65" },
+  { code: "БР",     name: "м-н БР",           addr: "Ул. Д-р Василаки Пападопулу 50" },
+  { code: "ТВ",     name: "м-н ТВ",           addr: "Ул. Тодор Влайков 24" },
+  { code: "КР",     name: "м-н КР",           addr: "Ул. Капитан Райчо Николов 20" },
+  { code: "ЧК",     name: "м-н ЧК",           addr: "ж.к. Чайка, бл. 28" },
+  { code: "ИВ",     name: "м-н ИВ",           addr: "Ул. Ивац Войвода 24" },
+  { code: "ВЛ",     name: "м-н ВЛ",           addr: "Ул. Янко Мустаков 33" },
+];
+
+const MONTH_BG = ["","Януари","Февруари","Март","Април","Май","Юни","Юли","Август","Септември","Октомври","Ноември","Декември"];
+
+// ══════════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════════
+let cfg = {};
+let localRecords  = JSON.parse(localStorage.getItem('elba_checkins') || '[]');
+let localLeaves   = JSON.parse(localStorage.getItem('elba_leaves')   || '[]');
+let currentLeaveType = 'Отпуска';
+let activeHistoryMonth = null;
+
+// ══════════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════════
+function init() {
+  fillLocationDropdowns();
+  cfg = JSON.parse(localStorage.getItem('elba_cfg') || 'null') || {};
+  if (!cfg.scriptUrl) cfg.scriptUrl = 'https://script.google.com/macros/s/AKfycbwHh5yzXump05hsln6yoGRpp4sN5VaISAsVu6useAAveiAVYLvmaABLLx-YxeJv1w--/exec';
+
+  if (!cfg.name) {
+    document.getElementById('setup-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+  } else {
+    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    document.getElementById('app').style.flexDirection = 'column';
+    applyConfig();
+    startClock();
+    loadToday();
+    loadMyLeaves();
+  }
+}
+
+function fillLocationDropdowns() {
+  const selIds = ['setup-location','ci-location','rpt-location','s-location-sel'];
+  selIds.forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = '';
+    LOCATIONS.forEach(loc => {
+      const opt = document.createElement('option');
+      opt.value = loc.code;
+      opt.textContent = loc.code + ' — ' + loc.name;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+function applyConfig() {
+  document.getElementById('header-name').textContent = cfg.name || '—';
+  document.getElementById('s-name').textContent = cfg.name || '—';
+  document.getElementById('s-loc').textContent  = cfg.location || '—';
+  document.getElementById('s-url').textContent  = cfg.scriptUrl ? cfg.scriptUrl.substring(0,40)+'…' : 'Не е зададен';
+  if (cfg.scriptUrl) document.getElementById('s-url-input').value = cfg.scriptUrl;
+
+  // Pre-select saved location
+  ['ci-location','rpt-location','s-location-sel'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (sel && cfg.location) sel.value = cfg.location;
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  SETUP
+// ══════════════════════════════════════════════════════════════════
+function saveSetup() {
+  const name = document.getElementById('setup-name').value.trim();
+  const loc  = document.getElementById('setup-location').value;
+  if (!name) { toast('Въведи своето име', 'error'); return; }
+  cfg = { name, location: loc, scriptUrl: 'https://script.google.com/macros/s/AKfycbwHh5yzXump05hsln6yoGRpp4sN5VaISAsVu6useAAveiAVYLvmaABLLx-YxeJv1w--/exec' };
+  localStorage.setItem('elba_cfg', JSON.stringify(cfg));
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('app').style.flexDirection = 'column';
+  applyConfig();
+  startClock();
+  loadToday();
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  CLOCK
+// ══════════════════════════════════════════════════════════════════
+function startClock() {
+  function tick() {
+    const now = new Date();
+    document.getElementById('clock').textContent =
+      String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('clock-date').textContent =
+      now.toLocaleDateString('bg-BG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  CHECK-IN / CHECK-OUT
+// ══════════════════════════════════════════════════════════════════
+async function doCheckin(type) {
+  const loc = document.getElementById('ci-location').value;
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const dateStr = pad(now.getDate()) + '.' + pad(now.getMonth()+1) + '.' + now.getFullYear();
+  const timeStr = pad(now.getHours()) + ':' + pad(now.getMinutes());
+
+  const record = {
+    date: dateStr, employee: cfg.name, location: loc,
+    type, time: timeStr, timestamp: now.toISOString()
+  };
+
+  // Save locally always
+  localRecords.push(record);
+  localStorage.setItem('elba_checkins', JSON.stringify(localRecords));
+  loadToday();
+
+  // Try to send to Google Sheets
+  if (cfg.scriptUrl) {
+    try {
+      const params = new URLSearchParams({
+        action: 'checkin',
+        employee: record.employee,
+        location: record.location,
+        type: record.type
+      });
+      const res = await fetch(cfg.scriptUrl + '?' + params);
+      const data = await res.json();
+      if (data.ok) {
+        toast(type + ' записан — ' + timeStr, 'success');
+      } else {
+        toast('Грешка: ' + (data.error||'?'), 'error');
+      }
+    } catch(err) {
+      toast(type + ' записан локално — ' + timeStr, 'info');
+    }
+  } else {
+    toast(type + ' — ' + timeStr + ' (без синхрон)', 'info');
+  }
+}
+
+function loadToday() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const today = pad(now.getDate()) + '.' + pad(now.getMonth()+1) + '.' + now.getFullYear();
+  const todayRecs = localRecords.filter(r => r.date === today && r.employee === cfg.name);
+  const el = document.getElementById('today-list');
+  if (!todayRecs.length) {
+    el.innerHTML = '<div class="no-records">Все още без записи за днес</div>';
+    return;
+  }
+  el.innerHTML = todayRecs.map(r => `
+    <div class="status-row">
+      <div>
+        <span class="status-type ${r.type==='ЧЕК ИН'?'status-in':'status-out'}">${r.type}</span>
+        <div class="status-loc" style="margin-top:3px;">${r.location}</div>
+      </div>
+      <span class="status-time">${r.time}</span>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  LEAVES
+// ══════════════════════════════════════════════════════════════════
+function setLeaveType(type) {
+  currentLeaveType = type;
+  document.getElementById('lt-vacation').classList.toggle('active', type==='Отпуска');
+  document.getElementById('lt-sick').classList.toggle('active', type==='Болничен');
+}
+
+async function submitLeave() {
+  const from = document.getElementById('leave-from').value;
+  const to   = document.getElementById('leave-to').value;
+  const loc  = cfg.location || 'Склад';
+  const note = document.getElementById('leave-note').value;
+
+  if (!from || !to) { toast('Избери период', 'error'); return; }
+  if (new Date(to) < new Date(from)) { toast('"До" трябва да е след "От"', 'error'); return; }
+
+  const days = Math.round((new Date(to)-new Date(from))/(86400000))+1;
+  const record = {
+    submitted: new Date().toLocaleDateString('bg-BG'),
+    employee: cfg.name, location: loc,
+    type: currentLeaveType, fromDate: from, toDate: to, days, note, status: 'pending'
+  };
+
+  localLeaves.push(record);
+  localStorage.setItem('elba_leaves', JSON.stringify(localLeaves));
+  loadMyLeaves();
+
+  if (cfg.scriptUrl) {
+    try {
+      const params = new URLSearchParams({
+        action: 'addLeave',
+        employee: cfg.name,
+        location: loc,
+        leaveType: currentLeaveType,
+        fromDate: from,
+        toDate: to,
+        note: note || ''
+      });
+      const res = await fetch(cfg.scriptUrl + '?' + params);
+      const data = await res.json();
+      if (data.ok) {
+        toast(`${currentLeaveType} подадена — ${data.days} дни`, 'success');
+      } else {
+        toast('Грешка: ' + (data.error||'?'), 'error');
+      }
+    } catch(err) {
+      toast(`Записана локално — ${days} дни`, 'info');
+    }
+  } else {
+    toast(`${currentLeaveType} — ${days} дни (без синхрон)`, 'info');
+  }
+
+  document.getElementById('leave-from').value = '';
+  document.getElementById('leave-to').value   = '';
+  document.getElementById('leave-note').value  = '';
+}
+
+function loadMyLeaves() {
+  const mine = localLeaves.filter(l => l.employee === cfg.name);
+  const el   = document.getElementById('my-leaves');
+  if (!mine.length) { el.innerHTML = '<div class="no-records">Няма подадени заявки</div>'; return; }
+  el.innerHTML = mine.slice().reverse().map(l => {
+    const sm={pending:['badge-pending','⏳ Чака'],approved:['badge-approved','✅ Одобрена'],declined:['badge-declined','❌ Отказана']};
+    const [cls,lbl]=sm[l.status||'pending'];
+    return `<div class="status-row"><div><span class="status-type ${l.type==='Болничен'?'status-out':'status-in'}">${l.type}</span><div class="status-loc" style="margin-top:2px;">${l.fromDate} → ${l.toDate} · ${l.days}д</div></div><span class="badge ${cls}">${lbl}</span></div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  HISTORY
+// ══════════════════════════════════════════════════════════════════
+function buildHistoryMonths() {
+  const months = [...new Set(localRecords
+    .filter(r => r.employee === cfg.name)
+    .map(r => { const p=r.date.split('.'); return p[2]+'-'+p[1]; })
+  )].sort().reverse();
+
+  if (!months.length) months.push(
+    new Date().getFullYear()+'-'+String(new Date().getMonth()+1).padStart(2,'0')
+  );
+
+  activeHistoryMonth = activeHistoryMonth || months[0];
+
+  const fil = document.getElementById('month-filters');
+  fil.innerHTML = months.map(m => {
+    const [yr,mo] = m.split('-');
+    return `<button class="filter-btn ${m===activeHistoryMonth?'active':''}" onclick="setHistoryMonth('${m}')">${MONTH_BG[+mo]} ${yr}</button>`;
+  }).join('');
+  renderHistory();
+}
+
+function setHistoryMonth(m) {
+  activeHistoryMonth = m;
+  buildHistoryMonths();
+}
+
+function renderHistory() {
+  const [yr, mo] = activeHistoryMonth.split('-');
+  const recs = localRecords.filter(r => {
+    const p = r.date.split('.');
+    return r.employee===cfg.name && p[1]===mo && p[2]===yr;
+  });
+  const el = document.getElementById('history-list');
+  if (!recs.length) { el.innerHTML = '<div class="no-records">Няма записи за този месец</div>'; return; }
+  el.innerHTML = recs.slice().reverse().map(r => `
+    <div class="status-row">
+      <div>
+        <span class="status-type ${r.type==='ЧЕК ИН'?'status-in':'status-out'}">${r.type}</span>
+        <div class="status-loc" style="margin-top:3px;">${r.date} · ${r.location}</div>
+      </div>
+      <span class="status-time">${r.time}</span>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  ОБРАЗЕЦ 76
+// ══════════════════════════════════════════════════════════════════
+async function generateReport() {
+  const locCode = document.getElementById('rpt-location').value;
+  const month   = document.getElementById('rpt-month').value;
+  const year    = document.getElementById('rpt-year').value;
+  const loc     = LOCATIONS.find(l => l.code === locCode);
+  const monthName = MONTH_BG[+month];
+
+  // Gather all employees who checked in at this location this month
+  const recs = localRecords.filter(r => {
+    const p = r.date.split('.');
+    return r.location===locCode && p[1]===month && p[2]===year;
+  });
+
+  // Get number of days in month
+  const daysInMonth = new Date(+year, +month, 0).getDate();
+
+  // Group by employee
+  const empMap = {};
+  recs.forEach(r => {
+    if (!empMap[r.employee]) empMap[r.employee] = {};
+    const day = +r.date.split('.')[0];
+    if (!empMap[r.employee][day]) empMap[r.employee][day] = [];
+    empMap[r.employee][day].push(r);
+  });
+
+  // Add leaves for this location/month
+  const leaves = localLeaves.filter(l => {
+    return l.location===locCode &&
+      (new Date(l.fromDate).getMonth()+1)===+month &&
+      new Date(l.fromDate).getFullYear()===+year;
+  });
+
+  const employees = Object.keys(empMap);
+  if (!employees.length && !leaves.length) {
+    toast('Няма данни за избрания обект и месец', 'error');
+    return;
+  }
+
+  // Day headers
+  const dayHeaders = Array.from({length:daysInMonth},(_,i)=>i+1);
+
+  let tableRows = employees.map((emp, idx) => {
+    const dayData = empMap[emp];
+    const cells = dayHeaders.map(d => {
+      const dayRecs = dayData[d] || [];
+      if (!dayRecs.length) return '<td></td>';
+      const hasIn  = dayRecs.some(r=>r.type==='ЧЕК ИН');
+      const hasOut = dayRecs.some(r=>r.type==='ЧЕК АУТ');
+      const inTime  = dayRecs.find(r=>r.type==='ЧЕК ИН')?.time || '';
+      const outTime = dayRecs.find(r=>r.type==='ЧЕК АУТ')?.time || '';
+      if (hasIn && hasOut) return `<td style="font-size:9px;"><span class="o76-cell-in">${inTime}</span><br><span class="o76-cell-out">${outTime}</span></td>`;
+      if (hasIn)  return `<td><span class="o76-cell-in">${inTime}</span></td>`;
+      if (hasOut) return `<td><span class="o76-cell-out">${outTime}</span></td>`;
+      return '<td></td>';
+    }).join('');
+
+    // Count worked days
+    const workedDays = Object.values(dayData).filter(d=>d.some(r=>r.type==='ЧЕК ИН')).length;
+    return `<tr><td class="name">${idx+1}. ${emp}</td>${cells}<td><strong>${workedDays}</strong></td></tr>`;
+  }).join('');
+
+  const html = `
+<div style="font-family:Arial,sans-serif; font-size:11px; color:#000; padding:12px;">
+  <div style="text-align:center; margin-bottom:8px;">
+    <div style="font-size:9px;">ОБРАЗЕЦ 76</div>
+    <h2 style="font-size:14px; margin:4px 0;">ПРИСЪСТВЕНА ФОРМА</h2>
+    <div>ЕЛБА ЕООД — ${loc.name} (${loc.addr})</div>
+    <div>${monthName} ${year} г.</div>
+  </div>
+  <div style="overflow-x:auto;">
+  <table class="o76-table" style="font-size:9px;">
+    <thead>
+      <tr>
+        <th style="min-width:130px;text-align:left;">Служител</th>
+        ${dayHeaders.map(d=>`<th style="min-width:28px;">${d}</th>`).join('')}
+        <th>Дни</th>
+      </tr>
+    </thead>
+    <tbody>${tableRows}</tbody>
+  </table>
+  </div>
+  <div style="margin-top:20px; display:flex; justify-content:space-between; font-size:10px;">
+    <div>Управител: ___________________________</div>
+    <div>Дата: ___________________________</div>
+    <div>Подпис: ___________________________</div>
+  </div>
+  <div style="margin-top:8px; font-size:9px; color:#666;">
+    Легенда: зелено = чек ин (час), червено = чек аут (час)
+  </div>
+</div>`;
+
+  document.getElementById('report-content').innerHTML = html;
+  document.getElementById('print-area').style.display = 'block';
+  document.getElementById('report-preview').innerHTML = html;
+  document.getElementById('print-btn').style.display = 'inline-flex';
+  toast('Образец 76 генериран', 'success');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════════════════════════════
+function saveSettings() {
+  const newLoc = document.getElementById('s-location-sel').value;
+  const newUrl = document.getElementById('s-url-input').value.trim();
+  cfg.location  = newLoc;
+  cfg.scriptUrl = newUrl;
+  localStorage.setItem('elba_cfg', JSON.stringify(cfg));
+  applyConfig();
+  toast('Настройките са запазени', 'success');
+}
+
+function resetApp() {
+  if (!confirm('Сигурен ли си? Ще трябва да въведеш отново своите данни.')) return;
+  localStorage.removeItem('elba_cfg');
+  location.reload();
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════════════════════════
+function showTab(tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-'+tab).classList.add('active');
+  document.querySelector(`[data-tab="${tab}"]`)?.classList.add('active');
+  if (tab === 'history') buildHistoryMonths();
+  if (tab === 'manager') { document.getElementById('manager-locked').style.display='block'; document.getElementById('manager-content').style.display='none'; }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════════════════════════
+let toastTimer;
+function toast(msg, type='info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className   = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+
+const MANAGER_PIN = '1234';
+
+function unlockManager() {
+  if (document.getElementById('manager-pin-input').value === MANAGER_PIN) {
+    document.getElementById('manager-locked').style.display = 'none';
+    document.getElementById('manager-content').style.display = 'flex';
+    renderManagerLeaves();
+    document.getElementById('manager-pin-input').value = '';
+  } else {
+    toast('Грешен PIN', 'error');
+    document.getElementById('manager-pin-input').value = '';
+  }
+}
+function lockManager() {
+  document.getElementById('manager-locked').style.display = 'block';
+  document.getElementById('manager-content').style.display = 'none';
+}
+function renderManagerLeaves() {
+  const all = JSON.parse(localStorage.getItem('elba_leaves') || '[]');
+  const el = document.getElementById('manager-leaves');
+  if (!all.length) { el.innerHTML = '<div class="no-records">Няма подадени заявки</div>'; return; }
+  el.innerHTML = all.slice().reverse().map((l, ri) => {
+    const origIdx = all.length - 1 - ri;
+    const sm={pending:['badge-pending','⏳ Чака'],approved:['badge-approved','✅ Одобрена'],declined:['badge-declined','❌ Отказана']};
+    const [cls,lbl]=sm[l.status||'pending'];
+    const ip=!l.status||l.status==='pending';
+    return `<div class="status-row" style="flex-wrap:wrap;gap:8px;align-items:flex-start;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:700;font-size:15px;">${l.employee}</div>
+        <div class="status-loc">${l.type} · ${l.fromDate} → ${l.toDate} · ${l.days} дни</div>
+        ${l.note?`<div class="status-loc" style="font-style:italic;">"${l.note}"</div>`:''}
+      </div>
+      <div style="display:flex;gap:6px;padding-top:2px;">
+        ${ip
+          ?`<button onclick="decideLeave(${origIdx},'approved')" style="background:var(--green-dim);color:var(--green);border:1.5px solid #86efac;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;">✅ Одобри</button>
+            <button onclick="decideLeave(${origIdx},'declined')" style="background:var(--red-dim);color:var(--red);border:1.5px solid #fca5a5;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;">❌ Откажи</button>`
+          :`<span class="badge ${cls}">${lbl}</span>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+function decideLeave(idx, decision) {
+  const leaves = JSON.parse(localStorage.getItem('elba_leaves') || '[]');
+  leaves[idx].status = decision;
+  localStorage.setItem('elba_leaves', JSON.stringify(leaves));
+  localLeaves = leaves;
+  renderManagerLeaves();
+  loadMyLeaves();
+  toast(decision==='approved'?'Одобрена ✅':'Отказана ❌', decision==='approved'?'success':'error');
+}
+
+// ── Boot ──
+init();
+</script>
+
+
+</body></html>
