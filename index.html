@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0043)file:///C:/Users/1PC/Downloads/index_2.html -->
+<!-- saved from url=(0043)file:///C:/Users/1PC/Downloads/index_4.html -->
 <html lang="bg"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -363,7 +363,7 @@ let activeHistoryMonth = null;
 function init() {
   fillLocationDropdowns();
   cfg = JSON.parse(localStorage.getItem('elba_cfg') || 'null') || {};
-  if (!cfg.scriptUrl) cfg.scriptUrl = 'https://script.google.com/macros/s/AKfycbwHh5yzXump05hsln6yoGRpp4sN5VaISAsVu6useAAveiAVYLvmaABLLx-YxeJv1w--/exec';
+  if (!cfg.scriptUrl) cfg.scriptUrl = 'https://script.google.com/macros/s/AKfycbzWPI6FGrR8Tlfb0GxncweZrsSTkTSrZhvPgFJVbjO03_qV2BqzQJ_RmRMpteZjCnBP/exec';
 
   if (!cfg.name) {
     document.getElementById('setup-screen').style.display = 'flex';
@@ -415,7 +415,7 @@ function saveSetup() {
   const name = document.getElementById('setup-name').value.trim();
   const loc  = document.getElementById('setup-location').value;
   if (!name) { toast('Въведи своето име', 'error'); return; }
-  cfg = { name, location: loc, scriptUrl: 'https://script.google.com/macros/s/AKfycbwHh5yzXump05hsln6yoGRpp4sN5VaISAsVu6useAAveiAVYLvmaABLLx-YxeJv1w--/exec' };
+  cfg = { name, location: loc, scriptUrl: 'https://script.google.com/macros/s/AKfycbzWPI6FGrR8Tlfb0GxncweZrsSTkTSrZhvPgFJVbjO03_qV2BqzQJ_RmRMpteZjCnBP/exec' };
   localStorage.setItem('elba_cfg', JSON.stringify(cfg));
   document.getElementById('setup-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
@@ -526,7 +526,7 @@ async function submitLeave() {
   const record = {
     submitted: new Date().toLocaleDateString('bg-BG'),
     employee: cfg.name, location: loc,
-    type: currentLeaveType, fromDate: from, toDate: to, days, note, status: 'pending'
+    type: currentLeaveType, fromDate: from, toDate: to, days, note, status: 'pending', id: Date.now().toString()
   };
 
   localLeaves.push(record);
@@ -547,6 +547,9 @@ async function submitLeave() {
       const res = await fetch(cfg.scriptUrl + '?' + params);
       const data = await res.json();
       if (data.ok) {
+        // Update local record with server ID for syncing status later
+        const idx = localLeaves.findIndex(l => l.id === record.id);
+        if (idx !== -1) { localLeaves[idx].id = data.id; localStorage.setItem('elba_leaves', JSON.stringify(localLeaves)); }
         toast(`${currentLeaveType} подадена — ${data.days} дни`, 'success');
       } else {
         toast('Грешка: ' + (data.error||'?'), 'error');
@@ -563,7 +566,18 @@ async function submitLeave() {
   document.getElementById('leave-note').value  = '';
 }
 
-function loadMyLeaves() {
+async function loadMyLeaves() {
+  // Try to load from server first
+  if (cfg.scriptUrl && cfg.name) {
+    try {
+      const res = await fetch(cfg.scriptUrl + '?action=getLeaves&employee=' + encodeURIComponent(cfg.name));
+      const data = await res.json();
+      if (data.ok && data.data.length > 0) {
+        localLeaves = data.data;
+        localStorage.setItem('elba_leaves', JSON.stringify(localLeaves));
+      }
+    } catch(e) { /* use local */ }
+  }
   const mine = localLeaves.filter(l => l.employee === cfg.name);
   const el   = document.getElementById('my-leaves');
   if (!mine.length) { el.innerHTML = '<div class="no-records">Няма подадени заявки</div>'; return; }
@@ -782,9 +796,19 @@ function lockManager() {
   document.getElementById('manager-locked').style.display = 'block';
   document.getElementById('manager-content').style.display = 'none';
 }
-function renderManagerLeaves() {
-  const all = JSON.parse(localStorage.getItem('elba_leaves') || '[]');
+async function renderManagerLeaves() {
   const el = document.getElementById('manager-leaves');
+  el.innerHTML = '<div class="no-records">Зареждане...</div>';
+  let all = [];
+  if (cfg.scriptUrl) {
+    try {
+      const res = await fetch(cfg.scriptUrl + '?action=getLeaves');
+      const data = await res.json();
+      if (data.ok) all = data.data;
+    } catch(e) { all = JSON.parse(localStorage.getItem('elba_leaves') || '[]'); }
+  } else {
+    all = JSON.parse(localStorage.getItem('elba_leaves') || '[]');
+  }
   if (!all.length) { el.innerHTML = '<div class="no-records">Няма подадени заявки</div>'; return; }
   el.innerHTML = all.slice().reverse().map((l, ri) => {
     const origIdx = all.length - 1 - ri;
@@ -806,13 +830,20 @@ function renderManagerLeaves() {
     </div>`;
   }).join('');
 }
-function decideLeave(idx, decision) {
+async function decideLeave(idx, decision) {
   const leaves = JSON.parse(localStorage.getItem('elba_leaves') || '[]');
-  leaves[idx].status = decision;
+  const leaf   = leaves[idx];
+  leaf.status  = decision;
   localStorage.setItem('elba_leaves', JSON.stringify(leaves));
   localLeaves = leaves;
+  // Sync to Google Sheets
+  if (cfg.scriptUrl && leaf.id) {
+    try {
+      const params = new URLSearchParams({ action: 'updateLeave', id: leaf.id, status: decision });
+      await fetch(cfg.scriptUrl + '?' + params);
+    } catch(e) { /* local only */ }
+  }
   renderManagerLeaves();
-  loadMyLeaves();
   toast(decision==='approved'?'Одобрена ✅':'Отказана ❌', decision==='approved'?'success':'error');
 }
 
